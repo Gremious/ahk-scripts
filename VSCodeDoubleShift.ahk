@@ -1,5 +1,11 @@
+#NoEnv
+SendMode Input ; Recommended for new scripts due to its superior speed and reliability.
+SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 #NoTrayIcon
 #SingleInstance,Force
+; #Warn  ; Enable warnings to assist with detecting common errors.
+; =========================
+
 SetTitleMatchMode, 2 
 GroupAdd Editor, - Visual Studio Code
 return
@@ -13,15 +19,4 @@ if ((A_TickCount - lastShift) <= 250) {
     Send {Shift}
 }
 lastShift := A_TickCount
-return
-
-$MButton::
-    goto_definition() {
-        toolbarHeight := 110
-        MouseGetPos, xpos, ypos
-        if (ypos >= toolbarHeight) {
-            Send {LButton}
-            Send {F12}
-        }
-}
 return
