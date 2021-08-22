@@ -10,13 +10,31 @@ EnvGet, UserProfile, userprofile
 
 #t::
 	Send {WIN up}
-	Send {T up}
-	If WinActive("ahk_class CabinetWClass") || WinActive("ahk_class ExploreWClass"){
-		WinGetText, data
-		Path := RegExMatch(data, "i`am)^Address: \K.*", dir) ? dir : A_Desktop
-		Run wt -d %Path%
+	Send {T up} 
+
+	Path := GetActiveExplorerPath()
+	if %Path% {
+		Run wt -d "%Path%"
 	} Else {
-		Run wt
+		if WinActive("ahk_exe sublime_text.exe") {
+			Send !t
+		} Else {
+			Run wt
+		}
+	}
+return
+
+GetActiveExplorerPath(hwnd=0) {
+	explorerHwnd := WinActive("ahk_class CabinetWClass") | WinActive("ahk_class ExploreWClass")
+
+	if (explorerHwnd) {
+		for window in ComObjCreate("Shell.Application").Windows {
+			try {
+				if (window && window.hwnd && window.hwnd==explorerHwnd)
+				return window.Document.Folder.Self.Path
+			}
+		}
 	}
 
-return
+	return false
+}
