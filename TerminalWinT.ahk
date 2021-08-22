@@ -13,14 +13,18 @@ EnvGet, UserProfile, userprofile
 	Send {T up} 
 
 	Path := GetActiveExplorerPath()
+	If InStr(Path, "::") {
+		Path:= false
+	}
+
 	if %Path% {
 		Run wt -d "%Path%"
 	} Else {
 		if WinActive("ahk_exe sublime_text.exe") {
 			Send !t
-		} Else {
-			Run wt
+			return
 		}
+		Run wt
 	}
 return
 
