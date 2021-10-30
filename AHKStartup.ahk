@@ -1,40 +1,37 @@
-#NoEnv
-SendMode Input ; Recommended for new scripts due to its superior speed and reliability.
-SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
-; #NoTrayIcon
-#SingleInstance,Force
-; #Warn  ; Enable warnings to assist with detecting common errors.
-; ^ - ctrl
-; + - shift
-; ! - alt
-; # - win
-; =========================
+; Runs all the scripts in %UserProfile%\AHK\Scripts\Startup
+; and all the scripts in \Admin with elevation
 
-RunAll()
+SendMode "Input"
+SetWorkingDir EnvGet("UserProfile") "\AHK\Scripts"
+#SingleInstance Off
+; #NoTrayIcon
+#Warn  ; Enable warnings to assist with detecting common errors.
+; =========================
 
 ; ctrl+win+f11
 ^#f11::RunAll()
-; ctrl+win+f12
-^#f12::ExitAll()
 ; ctrl+win+alt+f12
 ^#!f12::ExitApp
 
-RunAll() {	
-	Run VSCodeDoubleShift.ahk
-	Run VSCodeMiddleMouseToDefinition.ahk
-	Run *RunAs TerminalWinT.ahk
+RunAll()
+
+; Can also do Run Format("*RunAs {} .\TerminalWinT.ahk", A_AhkPath)
+RunAll() {
+	if not A_IsAdmin {
+		Loop Files ".\Startup\*.ahk" {
+			Run A_AhkPath " " A_LoopFileName
+		}
+		StartAdminInstance()
+	} else {
+		Loop Files ".\Admin\*.ahk" {
+			Run A_AhkPath " " A_LoopFileName
+		}
+		ExitApp
+	}
 }
 
-; Exists all scripsts except this one
-ExitAll() {
-	DetectHiddenWindows, % ( ( DHW:=A_DetectHiddenWindows ) + 0 ) . "On"
-	WinGet, L, List, ahk_class AutoHotkey
-
-	Loop %L% {
-		If ( L%A_Index% <> WinExist( A_ScriptFullPath " ahk_class AutoHotkey" ) ) {
-			PostMessage, 0x111, 65405, 0,, % "ahk_id " L%A_Index%
-		}
-	}
-
-	DetectHiddenWindows, %DHW% ; reset to default
+StartAdminInstance() {
+	if not A_IsAdmin {
+		Run "*RunAs " A_AhkPath " " A_ScriptFullPath
+	}	
 }
