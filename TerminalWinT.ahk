@@ -1,4 +1,4 @@
-﻿; SendMode "Input"
+﻿SendMode "Input"
 SetWorkingDir EnvGet("UserProfile")
 #SingleInstance Force
 #NoTrayIcon
