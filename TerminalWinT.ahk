@@ -1,38 +1,35 @@
-﻿#NoEnv ; Recommended for performance and compatibility with future AutoHotkey releases.
-SendMode Input ; Recommended for new scripts due to its superior speed and reliability.
-SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
+﻿; SendMode "Input"
+SetWorkingDir EnvGet("UserProfile")
+#SingleInstance Force
 #NoTrayIcon
-#SingleInstance,Force
 ; #Warn  ; Enable warnings to assist with detecting common errors.
 ; =========================
 
-EnvGet, UserProfile, userprofile
-
-#t::
-	Send {WIN up}
-	Send {T up} 
+#t::{
+	Send "{LWin up}"
+	Send "{T up}"
 
 	Path := GetActiveExplorerPath()
 	If InStr(Path, "::") {
 		Path:= false
 	}
 
-	if %Path% {
-		Run wt -d "%Path%"
+	if Path {
+		Run "wt -d " Path
 	} Else {
 		if WinActive("ahk_exe sublime_text.exe") {
-			Send !t
+			Send "!t"
 			return
 		}
-		Run wt
+		Run "wt"
 	}
-return
+}
 
-GetActiveExplorerPath(hwnd=0) {
+GetActiveExplorerPath() {
 	explorerHwnd := WinActive("ahk_class CabinetWClass") | WinActive("ahk_class ExploreWClass")
 
 	if (explorerHwnd) {
-		for window in ComObjCreate("Shell.Application").Windows {
+		for window in ComObject("Shell.Application").Windows {
 			try {
 				if (window && window.hwnd && window.hwnd==explorerHwnd)
 				return window.Document.Folder.Self.Path
@@ -42,3 +39,6 @@ GetActiveExplorerPath(hwnd=0) {
 
 	return false
 }
+
+; ctrl+win+f12
+^#f12::ExitApp
