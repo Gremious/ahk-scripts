@@ -1,7 +1,7 @@
-﻿; SendMode Input ; Recommended for new scripts due to its superior speed and reliability.
-SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
+﻿; SendMode "Input"
+SetWorkingDir EnvGet("UserProfile")
 #SingleInstance Force
-; #NoTrayIcon
+#NoTrayIcon
 ; #Warn  ; Enable warnings to assist with detecting common errors.
 ; =========================
 
@@ -41,6 +41,4 @@ GetActiveExplorerPath() {
 }
 
 ; ctrl+win+f12
-^#f12::{ 
-	ExitApp 
-}
+^#f12::ExitApp
